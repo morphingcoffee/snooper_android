@@ -1,3 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.morphingcoffee.snooper_android">
+    package="com.morphingcoffee.snooper_android">
+
+    <!-- This plugin makes consumer app inherit the following permission to query all user-installed
+    apps. It can be removed by the consumer app via tools:node="remove" node attribute -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+
 </manifest>
