@@ -3,10 +3,15 @@ package com.morphingcoffee.snooper_android
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -101,6 +106,8 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
 
                 "firstInstallTime" to packageInfo.firstInstallTime,
                 "lastUpdateTime" to packageInfo.lastUpdateTime,
+
+                "iconBytes" to iconFrom(pm, applicationInfo)
             )
 
             if (Build.VERSION.SDK_INT >= 24) {
@@ -153,6 +160,37 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
         }
 
         result.success(packageInfoMaps)
+    }
+
+    private fun iconFrom(pm: PackageManager, appInfo: ApplicationInfo): ByteArray? {
+        val icon: Drawable = appInfo.loadIcon(pm)
+        val bitmap: Bitmap
+
+        if (icon is BitmapDrawable) {
+            // This block is supposed to be slightly more efficient than universal impl
+            bitmap = icon.bitmap
+        } else {
+            // Universal impl for any Drawable
+            bitmap = Bitmap.createBitmap(
+                icon.intrinsicWidth,
+                icon.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            icon.setBounds(0, 0, canvas.width, canvas.height)
+            icon.draw(canvas)
+        }
+
+        // Convert bmp to ByteArray
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap?.compress(
+            Bitmap.CompressFormat.PNG,
+            100,
+            byteArrayOutputStream
+        )
+        val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+
+        return if (byteArray.isNotEmpty()) byteArray else null
     }
 
     private fun allPackageManagerFlags(): Int {

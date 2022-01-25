@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class DetailedAndroidPackageInfo {
   /// Return the label to use for this application
   final String name;
@@ -8,6 +10,9 @@ class DetailedAndroidPackageInfo {
   /// The kernel user-ID that has been assigned to this application;
   /// currently this is not a unique ID (multiple applications can have the same uid)
   final int uid;
+
+  /// App icon byte array
+  final Uint8List? iconBytes;
 
   /// The textual description of the application
   final String? description;
@@ -93,12 +98,11 @@ class DetailedAndroidPackageInfo {
   /// available. This is normally the same as the installing package name
   final String? installInitiatingPackageName;
 
-//<editor-fold desc="Data Methods">
-
   const DetailedAndroidPackageInfo({
     required this.name,
     this.packageName,
     required this.uid,
+    this.iconBytes,
     this.description,
     this.processName,
     this.dataDir,
@@ -121,7 +125,7 @@ class DetailedAndroidPackageInfo {
     this.installInitiatingPackageName,
   });
 
-// en@override
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is DetailedAndroidPackageInfo &&
@@ -129,6 +133,7 @@ class DetailedAndroidPackageInfo {
           name == other.name &&
           packageName == other.packageName &&
           uid == other.uid &&
+          iconBytes == other.iconBytes &&
           description == other.description &&
           processName == other.processName &&
           dataDir == other.dataDir &&
@@ -155,6 +160,7 @@ class DetailedAndroidPackageInfo {
       name.hashCode ^
       packageName.hashCode ^
       uid.hashCode ^
+      iconBytes.hashCode ^
       description.hashCode ^
       processName.hashCode ^
       dataDir.hashCode ^
@@ -182,6 +188,7 @@ class DetailedAndroidPackageInfo {
         ' name: $name,'
         ' packageName: $packageName,'
         ' uid: $uid,'
+        ' iconBytes.hashCode: ${iconBytes.hashCode},'
         ' description: $description,'
         ' processName: $processName,'
         ' dataDir: $dataDir,'
@@ -209,6 +216,7 @@ class DetailedAndroidPackageInfo {
     String? name,
     String? packageName,
     int? uid,
+    Uint8List? iconBytes,
     String? description,
     String? processName,
     String? dataDir,
@@ -234,6 +242,7 @@ class DetailedAndroidPackageInfo {
       name: name ?? this.name,
       packageName: packageName ?? this.packageName,
       uid: uid ?? this.uid,
+      iconBytes: iconBytes ?? this.iconBytes,
       description: description ?? this.description,
       processName: processName ?? this.processName,
       dataDir: dataDir ?? this.dataDir,
@@ -265,6 +274,7 @@ class DetailedAndroidPackageInfo {
       'name': name,
       'packageName': packageName,
       'uid': uid,
+      'iconBytes': iconBytes,
       'description': description,
       'processName': processName,
       'dataDir': dataDir,
@@ -293,6 +303,7 @@ class DetailedAndroidPackageInfo {
       name: map['name'] as String,
       packageName: map['packageName'] as String?,
       uid: map['uid'] as int,
+      iconBytes: map['iconBytes'] as Uint8List?,
       description: map['description'] as String?,
       processName: map['processName'] as String?,
       dataDir: map['dataDir'] as String?,

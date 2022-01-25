@@ -43,7 +43,15 @@ class _DisplayPackagesDetailedScreenState
       final updateDt = DateTime.fromMillisecondsSinceEpoch(pkg.lastUpdateTime);
 
       cells.add(DataCell(Text("${pkg.uid}")));
-      cells.add(const DataCell(Text("icon"), placeholder: true));
+      cells.add(DataCell(
+        SizedBox(
+          width: 64,
+          height: 64,
+          child: Image.memory(
+            pkg.iconBytes!,
+          ),
+        ),
+      ));
       cells.add(DataCell(Text(pkg.name.split(".").last)));
       cells.add(DataCell(Text(pkg.packageName!)));
 
@@ -60,8 +68,7 @@ class _DisplayPackagesDetailedScreenState
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          sortColumnIndex: 0,
-          sortAscending: false,
+          dataRowHeight: 100,
           columns: const [
             DataColumn(
               label: Text("uid"),
