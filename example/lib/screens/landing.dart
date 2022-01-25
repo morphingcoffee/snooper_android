@@ -128,7 +128,7 @@ class _LandingScreenState extends State<LandingScreen> {
     return const SizedBox(
       height: 5,
       width: 100,
-      child: Expanded(child: LinearProgressIndicator()),
+      child: LinearProgressIndicator(),
     );
   }
 

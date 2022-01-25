@@ -30,13 +30,44 @@ class _DisplayPackagesSimpleScreenState
   }
 
   Widget _buildBody() {
-    return ListView.builder(itemBuilder: (ctx, idx) {
-      final pkg = widget.pkgs[idx];
-
-      return ListTile(
-        title: Text("${pkg.name} (${pkg.uid})"),
-        subtitle: Text("${pkg.packageName}"),
-      );
-    });
+    final textTheme = Theme.of(context).textTheme;
+    return ListView.separated(
+      itemCount: widget.pkgs.length,
+      itemBuilder: (ctx, idx) {
+        final pkg = widget.pkgs[idx];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 36),
+          child: SizedBox(
+            height: 100,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    pkg.name.split(".").last,
+                    style: textTheme.headline6,
+                  ),
+                ),
+                Text(
+                  "${pkg.uid}",
+                  style: textTheme.bodySmall,
+                ),
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    "${pkg.packageName}",
+                    style: textTheme.bodyMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (ctx, idx) {
+        return const Divider();
+      },
+    );
   }
 }
