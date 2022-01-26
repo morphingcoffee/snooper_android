@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:snooper_android/model/android_service_info.dart';
+
 class DetailedAndroidPackageInfo {
   /// Return the label to use for this application
   final String name;
@@ -63,6 +65,9 @@ class DetailedAndroidPackageInfo {
   /// Units are as per System.currentTimeMillis()
   final int lastUpdateTime;
 
+  /// Services registered in application manifest
+  final List<AndroidServiceInfo>? services;
+
   // region API >= 24
 
   /// The minimum SDK version this application can run on.
@@ -117,6 +122,7 @@ class DetailedAndroidPackageInfo {
     required this.flags,
     required this.firstInstallTime,
     required this.lastUpdateTime,
+    required this.services,
     required this.minSdkVersion,
     this.deviceProtectedDataDir,
     this.storageUuid,
@@ -175,6 +181,7 @@ class DetailedAndroidPackageInfo {
       flags.hashCode ^
       firstInstallTime.hashCode ^
       lastUpdateTime.hashCode ^
+      services.hashCode ^
       minSdkVersion.hashCode ^
       deviceProtectedDataDir.hashCode ^
       storageUuid.hashCode ^
@@ -203,6 +210,7 @@ class DetailedAndroidPackageInfo {
         ' flags: $flags,'
         ' firstInstallTime: $firstInstallTime,'
         ' lastUpdateTime: $lastUpdateTime,'
+        ' services: $services,'
         ' minSdkVersion: $minSdkVersion,'
         ' deviceProtectedDataDir: $deviceProtectedDataDir,'
         ' storageUuid: $storageUuid,'
@@ -231,6 +239,7 @@ class DetailedAndroidPackageInfo {
     int? flags,
     int? firstInstallTime,
     int? lastUpdateTime,
+    List<AndroidServiceInfo>? services,
     int? minSdkVersion,
     String? deviceProtectedDataDir,
     String? storageUuid,
@@ -257,6 +266,7 @@ class DetailedAndroidPackageInfo {
       flags: flags ?? this.flags,
       firstInstallTime: firstInstallTime ?? this.firstInstallTime,
       lastUpdateTime: lastUpdateTime ?? this.lastUpdateTime,
+      services: services ?? this.services,
       minSdkVersion: minSdkVersion ?? this.minSdkVersion,
       deviceProtectedDataDir:
           deviceProtectedDataDir ?? this.deviceProtectedDataDir,
@@ -289,6 +299,7 @@ class DetailedAndroidPackageInfo {
       'flags': flags,
       'firstInstallTime': firstInstallTime,
       'lastUpdateTime': lastUpdateTime,
+      'services': services,
       'minSdkVersion': minSdkVersion,
       'deviceProtectedDataDir': deviceProtectedDataDir,
       'storageUuid': storageUuid,
@@ -320,6 +331,12 @@ class DetailedAndroidPackageInfo {
       flags: map['flags'] as int,
       firstInstallTime: map['firstInstallTime'] as int,
       lastUpdateTime: map['lastUpdateTime'] as int,
+      services: map['services'] == null
+          ? null
+          : (map['services'] as List<Object?>)
+              .map((serviceMap) => AndroidServiceInfo.fromMap(
+                  Map<String, dynamic>.from(serviceMap as Map)))
+              .toList(),
       minSdkVersion: map['minSdkVersion'] as int,
       deviceProtectedDataDir: map['deviceProtectedDataDir'] as String?,
       storageUuid: map['storageUuid'] as String?,

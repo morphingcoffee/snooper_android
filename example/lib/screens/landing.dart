@@ -108,8 +108,10 @@ class _LandingScreenState extends State<LandingScreen> {
     return InkWell(
       onTap: () {
         if (hasLoaded()) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (ctx) => navDestination()));
+          Future.delayed(const Duration(milliseconds: 150), () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (ctx) => navDestination()));
+          });
         }
       },
       child: ListTile(

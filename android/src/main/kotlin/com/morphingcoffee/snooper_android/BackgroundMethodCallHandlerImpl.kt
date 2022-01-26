@@ -110,6 +110,17 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
                 "iconBytes" to iconFrom(pm, applicationInfo)
             )
 
+            // Add Package Services
+            val services = packageInfo.services
+            infoMap["services"] = services?.map {
+                mapOf<String, Any?>(
+                    "name" to it.name,
+                    "flags" to it.flags,
+                    "exported" to it.exported,
+                    "enabled" to it.enabled,
+                )
+            }
+
             if (Build.VERSION.SDK_INT >= 24) {
                 infoMap["minSdkVersion"] = applicationInfo.minSdkVersion
                 infoMap["deviceProtectedDataDir"] = applicationInfo.deviceProtectedDataDir
