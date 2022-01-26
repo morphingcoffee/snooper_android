@@ -90,7 +90,7 @@ class _DisplayPackagesDetailedScreenState
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "x activities",
+                "${pkg.activities?.length ?? 0} activities",
                 style: _textTheme.labelSmall,
               ),
             ),

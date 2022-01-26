@@ -35,11 +35,11 @@ class AndroidServiceInfo {
 
   @override
   String toString() {
-    return 'AndroidServiceInfo{' +
-        ' name: $name,' +
-        ' flags: $flags,' +
-        ' exported: $exported,' +
-        ' enabled: $enabled,' +
+    return 'AndroidServiceInfo{'
+        ' name: $name,'
+        ' flags: $flags,'
+        ' exported: $exported,'
+        ' enabled: $enabled,'
         '}';
   }
 

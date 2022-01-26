@@ -121,6 +121,22 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
                 )
             }
 
+            // Add Package Activities
+            val activities = packageInfo.activities
+            infoMap["activities"] = activities?.map {
+                mapOf<String, Any?>(
+                    "name" to it.name,
+                    "flags" to it.flags,
+                    "exported" to it.exported,
+                    "enabled" to it.enabled,
+                    "targetActivity" to it.targetActivity,
+                    "parentActivityName" to it.parentActivityName,
+                    "screenOrientation" to it.screenOrientation,
+                    "taskAffinity" to it.taskAffinity,
+                    "launchMode" to it.launchMode,
+                )
+            }
+
             if (Build.VERSION.SDK_INT >= 24) {
                 infoMap["minSdkVersion"] = applicationInfo.minSdkVersion
                 infoMap["deviceProtectedDataDir"] = applicationInfo.deviceProtectedDataDir
