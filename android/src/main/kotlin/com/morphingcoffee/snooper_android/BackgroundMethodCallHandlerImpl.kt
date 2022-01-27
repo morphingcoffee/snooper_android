@@ -26,9 +26,6 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
-            "getPlatformVersion" -> {
-                result.success("Android ${Build.VERSION.RELEASE}")
-            }
             "getPackagesSimple" -> {
                 getPackagesSimple(result)
             }
