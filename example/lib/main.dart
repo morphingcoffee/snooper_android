@@ -14,11 +14,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _primarySwatch = Colors.deepPurple;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        primarySwatch: _primarySwatch,
+        splashColor: _primarySwatch[300],
+        highlightColor: _primarySwatch[200],
       ),
       home: const LandingScreen("Snooper Sample App"),
     );

@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:snooper_android/snooper_android.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('snooper_android');
+  const MethodChannel channel =
+      MethodChannel('com.morphingcoffee.snooper_android');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
