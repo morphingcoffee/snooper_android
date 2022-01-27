@@ -106,7 +106,7 @@ class X509SignatureInfo {
         '}';
   }
 
-  X509SignatureInfo copyWith({
+  X509SignatureInfo shallowCopyWith({
     String? subjectDN,
     String? issuerDN,
     String? serialNumber,

@@ -8,11 +8,6 @@ class SnooperAndroid {
   static const MethodChannel _channel =
       MethodChannel('com.morphingcoffee.snooper_android');
 
-  static Future<String?> get platformVersion async {
-    final String? version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
-
   /// Compute of [detailedPackageInfos] can be lengthy (longer than a single frame
   /// refresh period)
   static Future<List<SimpleAndroidPackageInfo>> get simplePackageInfos async {

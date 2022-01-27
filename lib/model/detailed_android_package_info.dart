@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart';
 import 'package:snooper_android/model/android_activity_info.dart';
 import 'package:snooper_android/model/android_service_info.dart';
 import 'package:snooper_android/model/x509_signature_info.dart';
@@ -158,17 +159,18 @@ class DetailedAndroidPackageInfo {
           permission == other.permission &&
           publicSourceDir == other.publicSourceDir &&
           enabled == other.enabled &&
-          sharedLibraryFiles == other.sharedLibraryFiles &&
+          const ListEquality()
+              .equals(sharedLibraryFiles, other.sharedLibraryFiles) &&
           flags == other.flags &&
           firstInstallTime == other.firstInstallTime &&
           lastUpdateTime == other.lastUpdateTime &&
-          services == other.services &&
-          activities == other.activities &&
+          const ListEquality().equals(services, other.services) &&
+          const ListEquality().equals(activities, other.activities) &&
           minSdkVersion == other.minSdkVersion &&
           deviceProtectedDataDir == other.deviceProtectedDataDir &&
           storageUuid == other.storageUuid &&
-          splitNames == other.splitNames &&
-          signatures == other.signatures &&
+          const ListEquality().equals(splitNames, other.splitNames) &&
+          const ListEquality().equals(signatures, other.signatures) &&
           installInitiatingPackageName == other.installInitiatingPackageName);
 
   @override
@@ -232,7 +234,7 @@ class DetailedAndroidPackageInfo {
         '}';
   }
 
-  DetailedAndroidPackageInfo copyWith({
+  DetailedAndroidPackageInfo shallowCopyWith({
     String? name,
     String? packageName,
     int? uid,
@@ -313,13 +315,13 @@ class DetailedAndroidPackageInfo {
       'flags': flags,
       'firstInstallTime': firstInstallTime,
       'lastUpdateTime': lastUpdateTime,
-      'services': services,
-      'activities': activities,
+      'services': services?.map((e) => e.toMap()).toList(),
+      'activities': activities?.map((e) => e.toMap()).toList(),
       'minSdkVersion': minSdkVersion,
       'deviceProtectedDataDir': deviceProtectedDataDir,
       'storageUuid': storageUuid,
       'splitNames': splitNames,
-      'signatures': signatures,
+      'signatures': signatures?.map((e) => e.toMap()).toList(),
       'installInitiatingPackageName': installInitiatingPackageName,
     };
   }
