@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:snooper_android/model/android_activity_info.dart';
 import 'package:snooper_android/model/android_service_info.dart';
+import 'package:snooper_android/model/x509_signature_info.dart';
 
 class DetailedAndroidPackageInfo {
   /// Return the label to use for this application
@@ -96,8 +97,10 @@ class DetailedAndroidPackageInfo {
 
   // region API >= 28
 
-  /// The names of all installed split APKs, ordered lexicographically
-  final List<Map<String, dynamic>>? apkSigningCertificates;
+  /// Signing certificates used to sign the APK contents of this application.
+  /// Not including any past signing certificates the package proved it is
+  /// authorized to use
+  final List<X509SignatureInfo>? signatures;
 
   // endregion
 
@@ -132,7 +135,7 @@ class DetailedAndroidPackageInfo {
     this.deviceProtectedDataDir,
     this.storageUuid,
     this.splitNames,
-    this.apkSigningCertificates,
+    required this.signatures,
     this.installInitiatingPackageName,
   });
 
@@ -159,11 +162,13 @@ class DetailedAndroidPackageInfo {
           flags == other.flags &&
           firstInstallTime == other.firstInstallTime &&
           lastUpdateTime == other.lastUpdateTime &&
+          services == other.services &&
+          activities == other.activities &&
           minSdkVersion == other.minSdkVersion &&
           deviceProtectedDataDir == other.deviceProtectedDataDir &&
           storageUuid == other.storageUuid &&
           splitNames == other.splitNames &&
-          apkSigningCertificates == other.apkSigningCertificates &&
+          signatures == other.signatures &&
           installInitiatingPackageName == other.installInitiatingPackageName);
 
   @override
@@ -192,7 +197,7 @@ class DetailedAndroidPackageInfo {
       deviceProtectedDataDir.hashCode ^
       storageUuid.hashCode ^
       splitNames.hashCode ^
-      apkSigningCertificates.hashCode ^
+      signatures.hashCode ^
       installInitiatingPackageName.hashCode;
 
   @override
@@ -222,7 +227,7 @@ class DetailedAndroidPackageInfo {
         ' deviceProtectedDataDir: $deviceProtectedDataDir,'
         ' storageUuid: $storageUuid,'
         ' splitNames: $splitNames,'
-        ' apkSigningCertificates: $apkSigningCertificates,'
+        ' signatures: $signatures,'
         ' installInitiatingPackageName: $installInitiatingPackageName,'
         '}';
   }
@@ -247,11 +252,12 @@ class DetailedAndroidPackageInfo {
     int? firstInstallTime,
     int? lastUpdateTime,
     List<AndroidServiceInfo>? services,
-    List<AndroidActivityInfo>? activites,
+    List<AndroidActivityInfo>? activities,
     int? minSdkVersion,
     String? deviceProtectedDataDir,
     String? storageUuid,
     List<String>? splitNames,
+    List<X509SignatureInfo>? signatures,
     List<Map<String, dynamic>>? apkSigningCertificates,
     String? installInitiatingPackageName,
   }) {
@@ -281,8 +287,7 @@ class DetailedAndroidPackageInfo {
           deviceProtectedDataDir ?? this.deviceProtectedDataDir,
       storageUuid: storageUuid ?? this.storageUuid,
       splitNames: splitNames ?? this.splitNames,
-      apkSigningCertificates:
-          apkSigningCertificates ?? this.apkSigningCertificates,
+      signatures: signatures ?? this.signatures,
       installInitiatingPackageName:
           installInitiatingPackageName ?? this.installInitiatingPackageName,
     );
@@ -314,7 +319,7 @@ class DetailedAndroidPackageInfo {
       'deviceProtectedDataDir': deviceProtectedDataDir,
       'storageUuid': storageUuid,
       'splitNames': splitNames,
-      'apkSigningCertificates': apkSigningCertificates,
+      'signatures': signatures,
       'installInitiatingPackageName': installInitiatingPackageName,
     };
   }
@@ -359,10 +364,11 @@ class DetailedAndroidPackageInfo {
       splitNames: map['splitNames'] == null
           ? null
           : List<String>.from(map['splitNames']),
-      apkSigningCertificates: map['apkSigningCertificates'] == null
+      signatures: map['signatures'] == null
           ? null
-          : List<Map<Object?, Object?>>.from(map['apkSigningCertificates'])
-              .map((e) => Map<String, dynamic>.from(e))
+          : (map['signatures'] as List<Object?>)
+              .map((signatureMap) => X509SignatureInfo.fromMap(
+                  Map<String, dynamic>.from(signatureMap as Map)))
               .toList(),
       installInitiatingPackageName:
           map['installInitiatingPackageName'] as String?,

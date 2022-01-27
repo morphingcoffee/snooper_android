@@ -66,7 +66,9 @@ class _DisplayPackagesDetailedScreenState
           children: [
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-              leading: Hero(tag: "${pkg.packageName}", child: Image.memory(pkg.iconBytes!)),
+              leading: Hero(
+                  tag: "${pkg.packageName}",
+                  child: Image.memory(pkg.iconBytes!)),
               title: Text(pkg.name.split(".").last),
               subtitle: Text("${pkg.packageName}"),
             ),
@@ -90,7 +92,8 @@ class _DisplayPackagesDetailedScreenState
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "${pkg.activities?.length ?? 0} activities",
+                _pluralAwareTitleText(
+                    pkg.activities?.length, "activity", "activities"),
                 style: _textTheme.labelSmall,
               ),
             ),
@@ -103,7 +106,8 @@ class _DisplayPackagesDetailedScreenState
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "${pkg.services?.length ?? 0} services",
+                _pluralAwareTitleText(
+                    pkg.services?.length, "service", "services"),
                 style: _textTheme.labelSmall,
               ),
             ),
@@ -116,7 +120,8 @@ class _DisplayPackagesDetailedScreenState
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "z signatures",
+                _pluralAwareTitleText(
+                    pkg.signatures?.length, "signature", "signatures"),
                 style: _textTheme.labelSmall,
               ),
             ),
@@ -128,6 +133,11 @@ class _DisplayPackagesDetailedScreenState
         ],
       ),
     );
+  }
+
+  String _pluralAwareTitleText(int? howMany, String singular, String plural) {
+    howMany ??= 0;
+    return (howMany == 1) ? "$howMany $singular" : "$howMany $plural";
   }
 
   Future<void> _navToIndividualPackageDetails(

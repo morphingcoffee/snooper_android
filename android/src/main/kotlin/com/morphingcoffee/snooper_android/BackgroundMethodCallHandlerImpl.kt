@@ -148,11 +148,9 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
             }
 
             if (Build.VERSION.SDK_INT >= 28) {
-                val signatures = pm.getPackageInfo(
-                    applicationInfo.packageName,
-                    PackageManager.GET_PERMISSIONS or PackageManager.GET_SIGNING_CERTIFICATES
-                ).signingInfo.apkContentsSigners
-
+                // Populate APK Signers
+                val signatures = packageInfo.signingInfo.apkContentsSigners
+                val signatureInfos = mutableListOf<Map<String, Any?>>()
                 signatures.forEach {
                     try {
                         val certFactory: CertificateFactory =
@@ -162,19 +160,25 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
                                 it.toByteArray().inputStream()
                             ) as X509Certificate
 
-                        // TODO append to a list for multiple signature support?
-                        infoMap["apkSigningCertificates"] = listOf(
-                            mapOf(
-                                "subjectDN" to x509Cert.subjectDN.toString(),
-                                "issuerDN" to x509Cert.issuerDN.toString(),
-                                "serialNumber" to x509Cert.serialNumber,
-                            ),
+                        val signatureInfo = mapOf(
+                            "subjectDN" to x509Cert.subjectDN.name,
+                            "issuerDN" to x509Cert.issuerDN.name,
+                            "serialNumber" to x509Cert.serialNumber.toString(),
+                            "notBefore" to x509Cert.notBefore.time,
+                            "notAfter" to x509Cert.notAfter.time,
+                            "sigAlgName" to x509Cert.sigAlgName,
+                            "version" to x509Cert.version,
+                            "publicKeyAlgName" to x509Cert.publicKey.algorithm,
+                            "publicKey" to x509Cert.publicKey.encoded,
+                            "signature" to x509Cert.encoded,
                         )
+
+                        signatureInfos.add(signatureInfo)
                     } catch (e: CertificateException) {
-                        e.printStackTrace();
+                        e.printStackTrace()
                     }
                 }
-
+                infoMap["signatures"] = signatureInfos
             }
 
             if (Build.VERSION.SDK_INT >= 30) {

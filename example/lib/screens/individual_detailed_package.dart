@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:snooper_android/model/android_activity_info.dart';
 import 'package:snooper_android/model/android_service_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
+import 'package:snooper_android/model/x509_signature_info.dart';
 
 class IndividualDetailedPackageScreen extends StatefulWidget {
   const IndividualDetailedPackageScreen(this.pkg, {Key? key}) : super(key: key);
@@ -111,6 +112,16 @@ class _IndividualDetailedPackageState
               ),
             ),
             ..._buildServices(pkg.services),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Center(
+                child: Text(
+                  "Signatures",
+                  style: textTheme.headline4,
+                ),
+              ),
+            ),
+            ..._buildSignatures(pkg.signatures),
           ],
         ),
       ),
@@ -188,6 +199,90 @@ class _IndividualDetailedPackageState
                     _buildEnabledWidget(service.enabled),
                     _buildExportedWidget(service.exported),
                   ],
+                ),
+              ],
+            ),
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(),
+          ),
+        ),
+      ));
+    });
+
+    return widgets;
+  }
+
+  List<Widget> _buildSignatures(List<X509SignatureInfo>? signatures) {
+    final textStyle = Theme.of(context).textTheme;
+    final List<Widget> widgets = [];
+
+    signatures?.forEach((signature) {
+      final notBefore =
+          DateTime.fromMillisecondsSinceEpoch(signature.notBefore);
+      final notAfter = DateTime.fromMillisecondsSinceEpoch(signature.notAfter);
+
+      widgets.add(Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Text(
+                  "Not Before",
+                  style: textStyle.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  notBefore.toString(),
+                  style: textStyle.labelSmall,
+                  textAlign: TextAlign.center,
+                ),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
+                Text(
+                  "Not After",
+                  style: textStyle.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  notAfter.toString(),
+                  style: textStyle.labelSmall,
+                  textAlign: TextAlign.center,
+                ),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
+                Text(
+                  "Signature Algorithm",
+                  style: textStyle.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "${signature.sigAlgName}",
+                  style: textStyle.labelSmall,
+                  textAlign: TextAlign.center,
+                ),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
+                Text(
+                  "Issuer DN",
+                  style: textStyle.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "${signature.issuerDN}",
+                  style: textStyle.labelSmall,
+                  textAlign: TextAlign.center,
+                ),
+                const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
+                Text(
+                  "Serial Number",
+                  style: textStyle.labelMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "${signature.serialNumber}",
+                  style: textStyle.labelSmall,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
