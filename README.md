@@ -26,7 +26,9 @@ List<DetailedAndroidPackageInfo> detailedPackageInfos = await SnooperAndroid.det
 ### Example App
 Available at [./example/lib/](./example/lib/)  
 
-<img src="docs/media/sample-home.png" width="250">
-<img src="docs/media/sample-packages-simple.png" width="250">
-<img src="docs/media/sample-packages-detailed.png" width="250">
-<img src="docs/media/sample-packages-detailed-dashboard.png" width="250">
+<p float="left">
+  <img src="docs/media/sample-home.png" width="250">
+  <img src="docs/media/sample-packages-simple.png" width="250">
+  <img src="docs/media/sample-packages-detailed.png" width="250">
+  <img src="docs/media/sample-packages-detailed-dashboard.png" width="250">
+</p>
