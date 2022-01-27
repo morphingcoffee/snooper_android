@@ -32,3 +32,21 @@ Available at [./example/lib/](./example/lib/)
   <img src="docs/media/sample-packages-detailed.png" width="250">
   <img src="docs/media/sample-packages-detailed-dashboard.png" width="250">
 </p>
+
+
+### Android Permissions
+Adding `snooper_android` as a dependency to your project will make the app inherit the [QUERY_ALL_PACKAGES](https://developer.android.com/reference/android/Manifest.permission#QUERY_ALL_PACKAGES)
+permission:
+```xml
+<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+```
+which can be verified in the app's merged manifest.
+
+It can be removed by adding the `tools` namespace and a permission removal tag to your app's `AndroidManifest.xml`:
+```xml
+<manifest xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:node="remove" />
+</manifest>
+```
+
+Removing [QUERY_ALL_PACKAGES](https://developer.android.com/reference/android/Manifest.permission#QUERY_ALL_PACKAGES) will result in all user-installed apps disappearing from the results returned by the `SnooperAndroid` APIs.

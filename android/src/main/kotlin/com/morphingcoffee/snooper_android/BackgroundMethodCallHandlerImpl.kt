@@ -234,5 +234,6 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
         return flags
     }
 
+    //endregion
 
 }
