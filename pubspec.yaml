@@ -1,7 +1,7 @@
 name: snooper_android
 description: Flutter platform package (plugin) which provides concrete Android implementations for various device info lookups
 version: 0.0.1
-homepage:
+repository: https://github.com/morphingcoffee/snooper_android
 
 environment:
   sdk: ">=2.17.0-27.0.dev <3.0.0"
