@@ -4,8 +4,8 @@ import 'package:snooper_android/constants/android_flags.dart';
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
 import 'package:snooper_android/snooper_android.dart';
-import 'package:snooper_android_example/screens/display_packages_detailed.dart';
-import 'package:snooper_android_example/screens/display_packages_simple.dart';
+import 'package:snooper_android_example/screens/apps/display_packages_detailed.dart';
+import 'package:snooper_android_example/screens/apps/display_packages_simple.dart';
 
 class ExampleScreen extends StatefulWidget {
   final String appTitle;

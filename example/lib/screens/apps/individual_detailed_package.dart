@@ -54,7 +54,7 @@ class _IndividualDetailedPackageState
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildSectionTitle("General Info"),
             ..._buildGeneralInfos(pkg),

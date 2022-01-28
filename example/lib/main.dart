@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:snooper_android_example/screens/example_fetch_snooper_data.dart';
+import 'package:snooper_android_example/screens/example_screen.dart';
 
 void main() {
   runApp(const MyApp());

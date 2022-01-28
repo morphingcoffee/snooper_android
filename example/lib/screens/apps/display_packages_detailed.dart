@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
-import 'package:snooper_android_example/screens/individual_detailed_package.dart';
+
+import 'individual_detailed_package.dart';
 
 class DisplayPackagesDetailedScreen extends StatefulWidget {
   final String title;
