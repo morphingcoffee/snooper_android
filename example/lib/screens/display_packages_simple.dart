@@ -21,8 +21,8 @@ class _DisplayPackagesSimpleScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Application Info (limited)",
+        title: Text(
+          "Application List (${widget.pkgs.length})",
         ),
       ),
       body: _buildBody(),

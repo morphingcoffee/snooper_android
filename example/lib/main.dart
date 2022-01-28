@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:snooper_android_example/screens/landing.dart';
+import 'package:snooper_android_example/screens/example_fetch_snooper_data.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +23,7 @@ class _MyAppState extends State<MyApp> {
         splashColor: _primarySwatch[300],
         highlightColor: _primarySwatch[200],
       ),
-      home: const LandingScreen("Snooper Sample App"),
+      home: const ExampleScreen("Snooper Sample App"),
     );
   }
 }

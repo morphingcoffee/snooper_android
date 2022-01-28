@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snooper_android/constants/android_flags.dart';
 
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
@@ -6,16 +7,16 @@ import 'package:snooper_android/snooper_android.dart';
 import 'package:snooper_android_example/screens/display_packages_detailed.dart';
 import 'package:snooper_android_example/screens/display_packages_simple.dart';
 
-class LandingScreen extends StatefulWidget {
+class ExampleScreen extends StatefulWidget {
   final String appTitle;
 
-  const LandingScreen(this.appTitle, {Key? key}) : super(key: key);
+  const ExampleScreen(this.appTitle, {Key? key}) : super(key: key);
 
   @override
-  _LandingScreenState createState() => _LandingScreenState();
+  _ExampleScreenState createState() => _ExampleScreenState();
 }
 
-class _LandingScreenState extends State<LandingScreen> {
+class _ExampleScreenState extends State<ExampleScreen> {
   List<SimpleAndroidPackageInfo>? _simplePackages;
   List<DetailedAndroidPackageInfo>? _detailedPackages;
 
@@ -25,6 +26,8 @@ class _LandingScreenState extends State<LandingScreen> {
     super.initState();
   }
 
+  /// SnooperAndroid API Example: fetching the available data
+  ///
   /// Fetch data from different [SnooperAndroid] APIs in parallel (without
   /// individual [await]s for sequential execution) since their compute time will
   /// differ significantly
@@ -78,7 +81,7 @@ class _LandingScreenState extends State<LandingScreen> {
       children: [
         _navInfoItem(
           icon: Icons.backpack_outlined,
-          title: "Application List",
+          title: "All Applications",
           subtitle: "limited info",
           hasLoaded: () => _simplePackages != null,
           navDestination: () => DisplayPackagesSimpleScreen(
@@ -86,14 +89,35 @@ class _LandingScreenState extends State<LandingScreen> {
           ),
         ),
         _navInfoItem(
-          icon: Icons.backpack,
-          title: "Application Data Table",
-          subtitle: "detailed info",
-          hasLoaded: () => _detailedPackages != null,
-          navDestination: () => DisplayPackagesDetailedScreen(
-            pkgs: _detailedPackages!,
-          ),
-        ),
+            icon: Icons.backpack,
+            title: "User Applications",
+            subtitle: "detailed info",
+            hasLoaded: () => _detailedPackages != null,
+            navDestination: () {
+              // Filter out system apps
+              final pkgs = _detailedPackages!
+                  .where((pkg) => !pkg.flags.has(ApplicationFlags.system))
+                  .toList();
+              return DisplayPackagesDetailedScreen(
+                title: "User Applications (${pkgs.length})",
+                pkgs: pkgs,
+              );
+            }),
+        _navInfoItem(
+            icon: Icons.backpack,
+            title: "System Applications",
+            subtitle: "detailed info",
+            hasLoaded: () => _detailedPackages != null,
+            navDestination: () {
+              // Filter out non-system apps
+              final pkgs = _detailedPackages!
+                  .where((pkg) => pkg.flags.has(ApplicationFlags.system))
+                  .toList();
+              return DisplayPackagesDetailedScreen(
+                title: "System Applications (${pkgs.length})",
+                pkgs: pkgs,
+              );
+            }),
       ],
     );
   }

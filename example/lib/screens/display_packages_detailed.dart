@@ -3,9 +3,11 @@ import 'package:snooper_android/model/detailed_android_package_info.dart';
 import 'package:snooper_android_example/screens/individual_detailed_package.dart';
 
 class DisplayPackagesDetailedScreen extends StatefulWidget {
+  final String title;
   final List<DetailedAndroidPackageInfo> pkgs;
 
   const DisplayPackagesDetailedScreen({
+    required this.title,
     required this.pkgs,
     Key? key,
   }) : super(key: key);
@@ -29,9 +31,7 @@ class _DisplayPackagesDetailedScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Application Info (detailed)",
-        ),
+        title: Text(widget.title),
       ),
       body: _buildBody(),
     );
