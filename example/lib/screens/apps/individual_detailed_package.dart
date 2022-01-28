@@ -16,7 +16,22 @@ class IndividualDetailedPackageScreen extends StatefulWidget {
 }
 
 class _IndividualDetailedPackageState
-    extends State<IndividualDetailedPackageScreen> {
+    extends State<IndividualDetailedPackageScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  static const List<Tab> _tabs = <Tab>[
+    Tab(text: 'General Info'),
+    Tab(text: 'Activities'),
+    Tab(text: 'Services'),
+    Tab(text: 'Signatures'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(vsync: this, length: _tabs.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     final pkg = widget.pkg;
@@ -41,6 +56,11 @@ class _IndividualDetailedPackageState
             ),
           ],
         ),
+        bottom: TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: _tabs,
+        ),
       ),
       body: _buildBody(),
     );
@@ -48,84 +68,89 @@ class _IndividualDetailedPackageState
 
   Widget _buildBody() {
     final pkg = widget.pkg;
-    final textTheme = Theme.of(context).textTheme;
+    return TabBarView(
+      children: [
+        _buildGeneralInfoContent(pkg),
+        _buildActivitiesContent(pkg.activities),
+        _buildServicesContent(pkg.services),
+        _buildSignaturesContent(pkg.signatures),
+      ],
+      controller: _tabController,
+    );
+  }
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildSectionTitle("General Info"),
-            ..._buildGeneralInfos(pkg),
-            _buildSectionTitle("Activities"),
-            Center(
-              child: Text(
-                "(${pkg.activities?.length ?? 0})",
-                style: textTheme.labelSmall,
-              ),
-            ),
-            ..._buildActivities(pkg.activities),
-            _buildSectionTitle("Services"),
-            Center(
-              child: Text(
-                "(${pkg.services?.length ?? 0})",
-                style: textTheme.labelSmall,
-              ),
-            ),
-            ..._buildServices(pkg.services),
-            _buildSectionTitle("Signatures"),
-            ..._buildSignatures(pkg.signatures),
-          ],
-        ),
+  Widget _buildGeneralInfoContent(DetailedAndroidPackageInfo pkg) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+          _buildSectionTitle("General Info"),
+          ..._buildGeneralInfoItems(pkg),
+        ]),
       ),
     );
   }
 
-  List<Widget> _buildActivities(List<AndroidActivityInfo>? activities) {
-    final textStyle = Theme.of(context).textTheme;
-    final List<Widget> widgets = [];
+  Widget _buildActivitiesContent(List<AndroidActivityInfo>? activities) {
+    final textTheme = Theme.of(context).textTheme;
 
-    activities?.forEach((activity) {
-      widgets.add(Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  "${activity.name?.split('.').last}",
-                  style: textStyle.titleMedium,
-                  textAlign: TextAlign.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          itemCount: 2 + (activities?.length ?? 0),
+          itemBuilder: (context, idx) {
+            if (idx == 0) {
+              return _buildSectionTitle("Activities");
+            } else if (idx == 1) {
+              return Center(
+                child: Text(
+                  "(${activities?.length ?? 0})",
+                  style: textTheme.labelSmall,
                 ),
-                Text(
-                  "${activity.name?.substring(0, activity.name!.lastIndexOf("."))}",
-                  style: textStyle.labelSmall,
-                  textAlign: TextAlign.center,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildEnabledChip(activity.enabled),
-                    _buildExportedChip(activity.exported),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(),
-          ),
-        ),
-      ));
-    });
+              );
+            }
 
-    return widgets;
+            final activity = activities![idx - 2];
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${activity.name?.split('.').last}",
+                        style: textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        "${activity.name?.substring(0, activity.name!.lastIndexOf("."))}",
+                        style: textTheme.labelSmall,
+                        textAlign: TextAlign.center,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _buildEnabledChip(activity.enabled),
+                          _buildExportedChip(activity.exported),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(),
+                ),
+              ),
+            );
+          }),
+    );
   }
 
-  List<Widget> _buildGeneralInfos(DetailedAndroidPackageInfo pkg) {
+  List<Widget> _buildGeneralInfoItems(DetailedAndroidPackageInfo pkg) {
     final installDt = DateTime.fromMillisecondsSinceEpoch(pkg.firstInstallTime);
     final updateDt = DateTime.fromMillisecondsSinceEpoch(pkg.lastUpdateTime);
     return [
@@ -278,52 +303,68 @@ class _IndividualDetailedPackageState
     );
   }
 
-  List<Widget> _buildServices(List<AndroidServiceInfo>? services) {
-    final textStyle = Theme.of(context).textTheme;
-    final List<Widget> widgets = [];
+  Widget _buildServicesContent(List<AndroidServiceInfo>? services) {
+    final textTheme = Theme.of(context).textTheme;
 
-    services?.forEach((service) {
-      widgets.add(Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  "${service.name?.split('.').last}",
-                  style: textStyle.titleMedium,
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  "${service.name?.substring(0, service.name!.lastIndexOf("."))}",
-                  style: textStyle.labelSmall,
-                  textAlign: TextAlign.center,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: 2 + (services?.length ?? 0),
+        itemBuilder: (context, idx) {
+          if (idx == 0) {
+            return _buildSectionTitle("Services");
+          } else if (idx == 1) {
+            return Center(
+              child: Text(
+                "(${services?.length ?? 0})",
+                style: textTheme.labelSmall,
+              ),
+            );
+          }
+
+          final service = services![idx - 2];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    _buildEnabledChip(service.enabled),
-                    _buildExportedChip(service.exported),
+                    Text(
+                      "${service.name?.split('.').last}",
+                      style: textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      "${service.name?.substring(0, service.name!.lastIndexOf("."))}",
+                      style: textTheme.labelSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildEnabledChip(service.enabled),
+                        _buildExportedChip(service.exported),
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(),
+              ),
             ),
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(),
-          ),
-        ),
-      ));
-    });
-
-    return widgets;
+          );
+        },
+      ),
+    );
   }
 
-  List<Widget> _buildSignatures(List<X509SignatureInfo>? signatures) {
-    final textStyle = Theme.of(context).textTheme;
-    final List<Widget> widgets = [];
+  Widget _buildSignaturesContent(List<X509SignatureInfo>? signatures) {
+    final textTheme = Theme.of(context).textTheme;
+    final List<Widget> widgets = [_buildSectionTitle("Signatures")];
 
     signatures?.forEach((signature) {
       final notBefore =
@@ -339,56 +380,56 @@ class _IndividualDetailedPackageState
               children: [
                 Text(
                   "Not Before",
-                  style: textStyle.labelMedium,
+                  style: textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   notBefore.toString(),
-                  style: textStyle.labelSmall,
+                  style: textTheme.labelSmall,
                   textAlign: TextAlign.center,
                 ),
                 const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
                 Text(
                   "Not After",
-                  style: textStyle.labelMedium,
+                  style: textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   notAfter.toString(),
-                  style: textStyle.labelSmall,
+                  style: textTheme.labelSmall,
                   textAlign: TextAlign.center,
                 ),
                 const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
                 Text(
                   "Signature Algorithm",
-                  style: textStyle.labelMedium,
+                  style: textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   "${signature.sigAlgName}",
-                  style: textStyle.labelSmall,
+                  style: textTheme.labelSmall,
                   textAlign: TextAlign.center,
                 ),
                 const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
                 Text(
                   "Issuer DN",
-                  style: textStyle.labelMedium,
+                  style: textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   "${signature.issuerDN}",
-                  style: textStyle.labelSmall,
+                  style: textTheme.labelSmall,
                   textAlign: TextAlign.center,
                 ),
                 const Padding(padding: EdgeInsets.symmetric(vertical: 4.0)),
                 Text(
                   "Serial Number",
-                  style: textStyle.labelMedium,
+                  style: textTheme.labelMedium,
                   textAlign: TextAlign.center,
                 ),
                 Text(
                   "${signature.serialNumber}",
-                  style: textStyle.labelSmall,
+                  style: textTheme.labelSmall,
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -402,7 +443,15 @@ class _IndividualDetailedPackageState
       ));
     });
 
-    return widgets;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: widgets,
+        ),
+      ),
+    );
   }
 
   Widget _buildSectionTitle(String title) {
