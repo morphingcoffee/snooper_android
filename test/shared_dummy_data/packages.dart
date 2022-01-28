@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
+import 'package:snooper_android/model/info_flags.dart';
 import 'package:snooper_android/model/simple_android_package_info.dart';
 
 import 'activities.dart';
@@ -31,7 +32,7 @@ DetailedAndroidPackageInfo dummyDetailedPackageWithAllFields() {
     publicSourceDir: 'publicSourceDir',
     enabled: false,
     sharedLibraryFiles: ['shared', 'library', 'files'],
-    flags: 4,
+    flags: const InfoFlags(value: 4),
     firstInstallTime: 5,
     lastUpdateTime: 6,
     services: [dummyServiceWithAllFields()],

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:snooper_android/model/android_activity_info.dart';
 import 'package:snooper_android/model/android_service_info.dart';
+import 'package:snooper_android/model/info_flags.dart';
 import 'package:snooper_android/model/x509_signature_info.dart';
 
 class DetailedAndroidPackageInfo {
@@ -58,7 +59,7 @@ class DetailedAndroidPackageInfo {
   final List<String>? sharedLibraryFiles;
 
   /// Flags associated with the application
-  final int flags;
+  final InfoFlags flags;
 
   /// The time at which the app was first installed.
   /// Units are as per System.currentTimeMillis()
@@ -250,7 +251,7 @@ class DetailedAndroidPackageInfo {
     String? publicSourceDir,
     bool? enabled,
     List<String>? sharedLibraryFiles,
-    int? flags,
+    InfoFlags? flags,
     int? firstInstallTime,
     int? lastUpdateTime,
     List<AndroidServiceInfo>? services,
@@ -312,7 +313,7 @@ class DetailedAndroidPackageInfo {
       'publicSourceDir': publicSourceDir,
       'enabled': enabled,
       'sharedLibraryFiles': sharedLibraryFiles,
-      'flags': flags,
+      'flags': flags.value,
       'firstInstallTime': firstInstallTime,
       'lastUpdateTime': lastUpdateTime,
       'services': services?.map((e) => e.toMap()).toList(),
@@ -345,7 +346,7 @@ class DetailedAndroidPackageInfo {
       sharedLibraryFiles: map['sharedLibraryFiles'] == null
           ? null
           : List<String>.from(map['sharedLibraryFiles']),
-      flags: map['flags'] as int,
+      flags: InfoFlags(value: map['flags'] as int),
       firstInstallTime: map['firstInstallTime'] as int,
       lastUpdateTime: map['lastUpdateTime'] as int,
       services: map['services'] == null

@@ -1,6 +1,8 @@
 Flutter platform package for Android which provides concrete implementations for various device info
 lookups.
 
+### Overview
+
 By using `SnooperAndroid` you can retrieve the following information:
 
 - Simple Device Applications List
@@ -8,8 +10,16 @@ By using `SnooperAndroid` you can retrieve the following information:
     - App icons
     - Activities
     - Services
+    - Application Flags (is system app, is debuggable, etc.)
     - APK Signatures
     - Other Metadata
+  
+### Specs & Constraints  
+Flutter Android plugin embedding version: **V2**  
+*Flutter version*: **>=2.5.0**  
+*Dart version*: **>=2.17.0-27.0.dev <3.0.0**  
+*Dart sound null-safety*: ✅   
+*Min Android SDK*: **21**  
 
 ### APIs provided by [SnooperAndroid.dart](./lib/snooper_android.dart):
 [Simple Package Info](./lib/model/simple_android_package_info.dart):

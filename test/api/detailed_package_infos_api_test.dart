@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:snooper_android/model/info_flags.dart';
 import 'package:snooper_android/snooper_android.dart';
 
 void main() {
@@ -12,7 +13,7 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  Map<String, dynamic> _packageWithMissingFields() {
+  Map<String, dynamic> _packageMapWithMissingFields() {
     return {
       'name': '1',
       'packageName': null,
@@ -67,7 +68,7 @@ void main() {
       () async {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       if (methodCall.method == 'getPackagesDetailed') {
-        return [_packageWithMissingFields()];
+        return [_packageMapWithMissingFields()];
       }
     });
 
@@ -89,7 +90,7 @@ void main() {
     expect(actualPkg.publicSourceDir, null);
     expect(actualPkg.enabled, false);
     expect(actualPkg.sharedLibraryFiles, null);
-    expect(actualPkg.flags, 4);
+    expect(actualPkg.flags, const InfoFlags(value: 4));
     expect(actualPkg.firstInstallTime, 5);
     expect(actualPkg.lastUpdateTime, 6);
     expect(actualPkg.services, null);

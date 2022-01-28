@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snooper_android/constants/android_flags.dart';
 import 'package:snooper_android/model/android_activity_info.dart';
 import 'package:snooper_android/model/android_service_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
@@ -22,6 +23,7 @@ class _IndividualDetailedPackageState
     return Scaffold(
       appBar: AppBar(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
               width: 36,
@@ -31,9 +33,11 @@ class _IndividualDetailedPackageState
                 child: Image.memory(pkg.iconBytes!),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(pkg.name.split(".").last),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(pkg.name.split(".").last),
+              ),
             ),
           ],
         ),
@@ -45,8 +49,6 @@ class _IndividualDetailedPackageState
   Widget _buildBody() {
     final pkg = widget.pkg;
     final textTheme = Theme.of(context).textTheme;
-    final installDt = DateTime.fromMillisecondsSinceEpoch(pkg.firstInstallTime);
-    final updateDt = DateTime.fromMillisecondsSinceEpoch(pkg.lastUpdateTime);
 
     return SingleChildScrollView(
       child: Padding(
@@ -54,41 +56,9 @@ class _IndividualDetailedPackageState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                "General Info",
-                style: textTheme.headline4,
-              ),
-            ),
-            Text(
-              "uid: ${pkg.uid}",
-              style: textTheme.bodyText1,
-            ),
-            Text(
-              "Package: ${pkg.packageName}",
-              style: textTheme.bodyText1,
-            ),
-            Text(
-              "Description: ${pkg.description}",
-              style: textTheme.bodyText1,
-            ),
-            Text(
-              "Min SDK Version: ${pkg.minSdkVersion}",
-              style: textTheme.bodyText1,
-            ),
-            Text(
-              "Installed on: ${installDt.toString()}",
-              style: textTheme.bodyText1,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Center(
-                child: Text(
-                  "Activities",
-                  style: textTheme.headline4,
-                ),
-              ),
-            ),
+            _buildSectionTitle("General Info"),
+            ..._buildGeneralInfos(pkg),
+            _buildSectionTitle("Activities"),
             Center(
               child: Text(
                 "(${pkg.activities?.length ?? 0})",
@@ -96,15 +66,7 @@ class _IndividualDetailedPackageState
               ),
             ),
             ..._buildActivities(pkg.activities),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Center(
-                child: Text(
-                  "Services",
-                  style: textTheme.headline4,
-                ),
-              ),
-            ),
+            _buildSectionTitle("Services"),
             Center(
               child: Text(
                 "(${pkg.services?.length ?? 0})",
@@ -112,15 +74,7 @@ class _IndividualDetailedPackageState
               ),
             ),
             ..._buildServices(pkg.services),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Center(
-                child: Text(
-                  "Signatures",
-                  style: textTheme.headline4,
-                ),
-              ),
-            ),
+            _buildSectionTitle("Signatures"),
             ..._buildSignatures(pkg.signatures),
           ],
         ),
@@ -153,8 +107,8 @@ class _IndividualDetailedPackageState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildEnabledWidget(activity.enabled),
-                    _buildExportedWidget(activity.exported),
+                    _buildEnabledChip(activity.enabled),
+                    _buildExportedChip(activity.exported),
                   ],
                 ),
               ],
@@ -169,6 +123,159 @@ class _IndividualDetailedPackageState
     });
 
     return widgets;
+  }
+
+  List<Widget> _buildGeneralInfos(DetailedAndroidPackageInfo pkg) {
+    final installDt = DateTime.fromMillisecondsSinceEpoch(pkg.firstInstallTime);
+    final updateDt = DateTime.fromMillisecondsSinceEpoch(pkg.lastUpdateTime);
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Package", subtitle: pkg.packageName ?? 'none'),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: (pkg.description == null)
+            ? []
+            : [
+                _buildGeneralInfoWidget(
+                    title: "Description",
+                    subtitle: pkg.description!,
+                    maxWidthFraction: 1 / 2),
+              ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "System App",
+              subtitle: pkg.flags.has(ApplicationFlags.system) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 5),
+          _buildGeneralInfoWidget(
+              title: "Debuggable",
+              subtitle:
+                  pkg.flags.has(ApplicationFlags.debuggable) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 4),
+          _buildGeneralInfoWidget(
+              title: "Min SDK",
+              subtitle: pkg.minSdkVersion.toString(),
+              maxWidthFraction: 1 / 5),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Cloud Backup",
+              subtitle: pkg.flags.has(ApplicationFlags.allowBackup)
+                  ? 'enabled'
+                  : 'disabled',
+              maxWidthFraction: 1 / 3),
+          _buildGeneralInfoWidget(
+              title: "Uses Cleartext Traffic",
+              subtitle: pkg.flags.has(ApplicationFlags.usesCleartextTraffic)
+                  ? 'yes'
+                  : 'no',
+              maxWidthFraction: 1 / 3),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Installed",
+              subtitle:
+                  pkg.flags.has(ApplicationFlags.installed) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 3),
+          _buildGeneralInfoWidget(
+              title: "Stopped",
+              subtitle: pkg.flags.has(ApplicationFlags.stopped) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 3),
+          _buildGeneralInfoWidget(
+              title: "Suspended",
+              subtitle:
+                  pkg.flags.has(ApplicationFlags.suspended) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 3),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Data-only",
+              subtitle:
+                  pkg.flags.has(ApplicationFlags.isDataOnly) ? 'yes' : 'no',
+              maxWidthFraction: 1 / 4),
+          _buildGeneralInfoWidget(
+            title: "Kernel User ID",
+            subtitle: pkg.uid.toString(),
+            maxWidthFraction: 2 / 4,
+          ),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Storage UUID",
+              subtitle: pkg.storageUuid ?? 'none',
+              maxWidthFraction: 1),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildGeneralInfoWidget(
+              title: "Installed On",
+              subtitle: installDt.toString(),
+              maxWidthFraction: 1 / 3),
+          _buildGeneralInfoWidget(
+              title: "Updated On",
+              subtitle: updateDt.toString(),
+              maxWidthFraction: 1 / 3),
+        ],
+      )
+    ];
+  }
+
+  Widget _buildGeneralInfoWidget(
+      {required String title, required String subtitle, maxWidthFraction = 1}) {
+    assert(maxWidthFraction <= 1.0);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(Size(
+                maxWidthFraction * MediaQuery.of(context).size.width,
+                double.infinity)),
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  subtitle,
+                  style: Theme.of(context).textTheme.labelSmall,
+                  textAlign: TextAlign.center,
+                  maxLines: 5,
+                ),
+              ],
+            ),
+          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(),
+        ),
+      ),
+    );
   }
 
   List<Widget> _buildServices(List<AndroidServiceInfo>? services) {
@@ -196,8 +303,8 @@ class _IndividualDetailedPackageState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildEnabledWidget(service.enabled),
-                    _buildExportedWidget(service.exported),
+                    _buildEnabledChip(service.enabled),
+                    _buildExportedChip(service.exported),
                   ],
                 ),
               ],
@@ -298,7 +405,19 @@ class _IndividualDetailedPackageState
     return widgets;
   }
 
-  Widget _buildEnabledWidget(bool isEnabled) {
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Center(
+        child: Text(
+          title,
+          style: Theme.of(context).textTheme.headline4,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnabledChip(bool isEnabled) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
@@ -313,7 +432,7 @@ class _IndividualDetailedPackageState
     );
   }
 
-  Widget _buildExportedWidget(bool isExported) {
+  Widget _buildExportedChip(bool isExported) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
