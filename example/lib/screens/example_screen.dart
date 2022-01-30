@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snooper_android/constants/android_flags.dart';
+import 'package:snooper_android/model/sensors/sensor_info.dart';
 
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
@@ -19,6 +20,7 @@ class ExampleScreen extends StatefulWidget {
 class _ExampleScreenState extends State<ExampleScreen> {
   List<SimpleAndroidPackageInfo>? _simplePackages;
   List<DetailedAndroidPackageInfo>? _detailedPackages;
+  List<SensorInfo>? _sensors;
 
   @override
   void initState() {
@@ -38,15 +40,21 @@ class _ExampleScreenState extends State<ExampleScreen> {
       _detailedPackages = null;
     });
 
-    // Fetch Simple info
+    // Fetch Simple app info
     SnooperAndroid.simplePackageInfos.then((pkgs) {
       _simplePackages = pkgs;
       _safeSetState();
     });
 
-    // Fetch Detailed info
+    // Fetch Detailed app info
     SnooperAndroid.detailedPackageInfos.then((pkgs) {
       _detailedPackages = pkgs;
+      _safeSetState();
+    });
+
+    // Fetch sensor info
+    SnooperAndroid.sensorInfos.then((sensors) {
+      _sensors = sensors;
       _safeSetState();
     });
   }

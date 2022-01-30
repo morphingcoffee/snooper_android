@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:snooper_android/model/sensors/sensor_info.dart';
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
 
@@ -8,17 +9,29 @@ class SnooperAndroid {
   static const MethodChannel _channel =
       MethodChannel('com.morphingcoffee.snooper_android');
 
-  /// Compute of [detailedPackageInfos] can be lengthy (longer than a single frame
+  /// Get a list of all applications on the device along with most basic metadata
+  ///
+  /// Compute of [simplePackageInfos] can be lengthy (longer than a single frame
   /// refresh period)
   static Future<List<SimpleAndroidPackageInfo>> get simplePackageInfos async {
     return _simplePackages();
   }
 
+  /// Get a list of all applications on the device along with detailed metadata
+  ///
   /// Compute of [detailedPackageInfos] can be lengthy (much longer than a single frame
   /// refresh period)
   static Future<List<DetailedAndroidPackageInfo>>
       get detailedPackageInfos async {
     return _detailedPackages();
+  }
+
+  /// Get a list of device sensors along with their metadata
+  ///
+  /// Compute of [sensorInfos] can be lengthy (longer than a single frame
+  /// refresh period)
+  static Future<List<SensorInfo>> get sensorInfos async {
+    return _sensors();
   }
 
   static Future<List<SimpleAndroidPackageInfo>> _simplePackages() async {
@@ -42,6 +55,16 @@ class SnooperAndroid {
     return packageInfoMaps
         .map((packageInfoMap) =>
             DetailedAndroidPackageInfo.fromMap(packageInfoMap))
+        .toList(growable: false);
+  }
+
+  static Future<List<SensorInfo>> _sensors() async {
+    final task = _channel.invokeListMethod<Map<dynamic, dynamic>>('getSensors');
+    final taskResult = (await task) ?? [];
+    final sensorInfoMaps = taskResult.map((e) => Map<String, dynamic>.from(e));
+
+    return sensorInfoMaps
+        .map((sensorInfoMap) => SensorInfo.fromMap(sensorInfoMap))
         .toList(growable: false);
   }
 }
