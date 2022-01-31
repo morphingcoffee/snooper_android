@@ -214,12 +214,12 @@ class SensorInfo {
 
   factory SensorInfo.fromMap(Map<String, dynamic> map) {
     return SensorInfo(
-      name: map['name'] as String,
+      name: map['name'] as String?,
       type: SensorTypeWrapper(typeValue: map['type'] as int),
-      stringType: map['stringType'] as String,
+      stringType: map['stringType'] as String?,
       isWakeUpSensor: map['isWakeUpSensor'] as bool,
       reportingMode: map['reportingMode'] as int,
-      vendor: map['vendor'] as String,
+      vendor: map['vendor'] as String?,
       version: map['version'] as int,
       maximumRange: map['maximumRange'] as double,
       resolution: map['resolution'] as double,

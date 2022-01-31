@@ -74,6 +74,18 @@ class SensorTypeWrapper {
         return SensorType.pose6DOF;
       case (29):
         return SensorType.stationaryDetect;
+      case (30):
+        return SensorType.motionDetect;
+      case (31):
+        return SensorType.heartBeat;
+      case (32):
+        return SensorType.dynamicSensorMeta;
+      case (34):
+        return SensorType.lowLatencyOffbodyDetect;
+      case (35):
+        return SensorType.accelerometerUncalibrated;
+      case (36):
+        return SensorType.hingeAngle;
 
       /// If [SensorType.unknown] is reached, library needs updating.
       /// Consumer should fall back to manual handling of [typeValue]

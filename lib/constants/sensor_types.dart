@@ -207,6 +207,26 @@ enum SensorType {
   /// A constant describing a stationary detect sensor
   stationaryDetect,
 
+  /// A constant describing a motion detect sensor
+  motionDetect,
+
+  /// A constant describing a heart beat sensor
+  heartBeat,
+
+  /// A constant describing a dynamic sensor meta event sensor.
+  /// A sensor event of this type is received when a dynamic sensor is added to
+  /// or removed from the system
+  dynamicSensorMeta,
+
+  /// A constant describing a low latency off-body detect sensor
+  lowLatencyOffbodyDetect,
+
+  /// A constant describing an uncalibrated accelerometer sensor
+  accelerometerUncalibrated,
+
+  /// A constant describing a hinge angle sensor
+  hingeAngle,
+
   /// Library may be not up to date to handle this unknown type.
   /// Fallback to manual handling of underlying type value.
   unknown,
