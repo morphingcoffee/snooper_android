@@ -51,7 +51,12 @@ class SensorInfo {
   /// delay is capped at 5000 microseconds (200 Hz).
   final int minDelay;
 
-  /// The power in mA used by this sensor while in use
+  /// The "power" current in mA used by this sensor while in use.
+  /// Note this is NOT measured in Watts, so to yield milliWatts, nominal voltage
+  /// of the battery has to be taken into account.
+  ///
+  /// More at:
+  /// https://source.android.com/devices/sensors/power-use#power_measurement_process
   final double power;
 
   // region API >= 24

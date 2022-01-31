@@ -7,6 +7,7 @@ import 'package:snooper_android/model/detailed_android_package_info.dart';
 import 'package:snooper_android/snooper_android.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_detailed.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_simple.dart';
+import 'package:snooper_android_example/screens/sensors/display_sensors.dart';
 
 class ExampleScreen extends StatefulWidget {
   final String appTitle;
@@ -124,6 +125,16 @@ class _ExampleScreenState extends State<ExampleScreen> {
               return DisplayPackagesDetailedScreen(
                 title: "System Applications (${pkgs.length})",
                 pkgs: pkgs,
+              );
+            }),
+        _navInfoItem(
+            icon: Icons.sensors,
+            title: "Sensors",
+            subtitle: "sensors",
+            hasLoaded: () => _sensors != null,
+            navDestination: () {
+              return DisplaySensorsScreen(
+                sensors: _sensors!,
               );
             }),
       ],
