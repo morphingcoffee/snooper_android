@@ -3,5 +3,6 @@
 * Added initial APIs:
     * SnooperAndroid.simplePackageInfos
     * SnooperAndroid.detailedPackageInfos
+    * SnooperAndroid.sensorInfos
 * Added dependency on 'collections' pub package for deep-compare functionality
 * Addition of tests, example app & guidance documentation

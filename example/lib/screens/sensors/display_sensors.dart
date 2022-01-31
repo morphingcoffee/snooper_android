@@ -38,7 +38,7 @@ class _DisplaySensorsScreenState extends State<DisplaySensorsScreen> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 36),
           child: SizedBox(
-            height: 100,
+            height: 130,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
