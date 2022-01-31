@@ -13,6 +13,7 @@ import android.os.Build
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.security.cert.CertificateException
 import java.security.cert.CertificateFactory
@@ -26,19 +27,24 @@ import java.security.cert.X509Certificate
 class BackgroundMethodCallHandlerImpl(private val context: Context) :
     MethodChannel.MethodCallHandler {
 
+    // Coroutine scope for executing tasks asynchronously, to avoid blocking current (background) thread
+    private val scope = CoroutineScope(Dispatchers.Default)
+
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        when (call.method) {
-            "getPackagesSimple" -> {
-                getPackagesSimple(result)
-            }
-            "getPackagesDetailed" -> {
-                getPackagesDetailed(result)
-            }
-            "getSensors" -> {
-                getSensors(result)
-            }
-            else -> {
-                result.notImplemented()
+        scope.launch {
+            when (call.method) {
+                "getPackagesSimple" -> {
+                    getPackagesSimple(result)
+                }
+                "getPackagesDetailed" -> {
+                    getPackagesDetailed(result)
+                }
+                "getSensors" -> {
+                    getSensors(result)
+                }
+                else -> {
+                    result.notImplemented()
+                }
             }
         }
     }
