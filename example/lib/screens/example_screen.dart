@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:snooper_android/constants/android_flags.dart';
+import 'package:snooper_android/model/sensors/sensor_info.dart';
 
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
 import 'package:snooper_android/snooper_android.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_detailed.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_simple.dart';
+import 'package:snooper_android_example/screens/sensors/display_sensors.dart';
 
 class ExampleScreen extends StatefulWidget {
   final String appTitle;
@@ -19,6 +21,7 @@ class ExampleScreen extends StatefulWidget {
 class _ExampleScreenState extends State<ExampleScreen> {
   List<SimpleAndroidPackageInfo>? _simplePackages;
   List<DetailedAndroidPackageInfo>? _detailedPackages;
+  List<SensorInfo>? _sensors;
 
   @override
   void initState() {
@@ -38,15 +41,21 @@ class _ExampleScreenState extends State<ExampleScreen> {
       _detailedPackages = null;
     });
 
-    // Fetch Simple info
+    // Fetch Simple app info
     SnooperAndroid.simplePackageInfos.then((pkgs) {
       _simplePackages = pkgs;
       _safeSetState();
     });
 
-    // Fetch Detailed info
+    // Fetch Detailed app info
     SnooperAndroid.detailedPackageInfos.then((pkgs) {
       _detailedPackages = pkgs;
+      _safeSetState();
+    });
+
+    // Fetch sensor info
+    SnooperAndroid.sensorInfos.then((sensors) {
+      _sensors = sensors;
       _safeSetState();
     });
   }
@@ -116,6 +125,16 @@ class _ExampleScreenState extends State<ExampleScreen> {
               return DisplayPackagesDetailedScreen(
                 title: "System Applications (${pkgs.length})",
                 pkgs: pkgs,
+              );
+            }),
+        _navInfoItem(
+            icon: Icons.sensors,
+            title: "Sensors",
+            subtitle: "sensors",
+            hasLoaded: () => _sensors != null,
+            navDestination: () {
+              return DisplaySensorsScreen(
+                sensors: _sensors!,
               );
             }),
       ],

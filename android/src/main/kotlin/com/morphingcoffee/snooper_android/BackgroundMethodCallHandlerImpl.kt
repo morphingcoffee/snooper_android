@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Build
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodCall
@@ -32,13 +34,16 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
             "getPackagesDetailed" -> {
                 getPackagesDetailed(result)
             }
+            "getSensors" -> {
+                getSensors(result)
+            }
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    //region impl
+    //region simple package retrieval impl
 
     private fun getPackagesSimple(@NonNull result: MethodChannel.Result) {
         val packageInfoMaps = mutableListOf<Map<String, Any?>>()
@@ -62,6 +67,10 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
 
         result.success(packageInfoMaps)
     }
+
+    // endregion
+
+    //region detailed package retrieval impl
 
     private fun getPackagesDetailed(@NonNull result: MethodChannel.Result) {
         val packageInfoMaps = mutableListOf<Map<String, Any?>>()
@@ -235,5 +244,43 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
     }
 
     //endregion
+
+    // region sensors retrieval impl
+
+    private fun getSensors(@NonNull result: MethodChannel.Result) {
+        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager?
+        val sensors: List<Sensor> = sensorManager?.getSensorList(Sensor.TYPE_ALL) ?: listOf()
+        val sensorMaps: List<MutableMap<String, Any?>> = sensors.map {
+            val sensorMap: MutableMap<String, Any?> = mutableMapOf(
+                "name" to it.name,
+                "type" to it.type,
+                "stringType" to it.stringType,
+                "isWakeUpSensor" to it.isWakeUpSensor,
+                "reportingMode" to it.reportingMode,
+                "vendor" to it.vendor,
+                "version" to it.version,
+                "maximumRange" to it.maximumRange,
+                "resolution" to it.resolution,
+                "maxDelay" to it.maxDelay,
+                "minDelay" to it.minDelay,
+                "power" to it.power,
+            )
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                sensorMap["isDynamicSensor"] = it.isDynamicSensor
+                sensorMap["isAdditionalInfoSupported"] = it.isAdditionalInfoSupported
+            }
+
+            if (Build.VERSION.SDK_INT >= 31) {
+                sensorMap["highestDirectReportRateLevel"] = it.highestDirectReportRateLevel
+            }
+
+            sensorMap
+        }
+
+        result.success(sensorMaps)
+    }
+
+    // endregion
 
 }
