@@ -306,8 +306,8 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
             val featureMap: MutableMap<String, Any?> = mutableMapOf(
                 "name" to it.name,
                 "flags" to it.flags,
-                "glEsVersion" to it.glEsVersion,
-                "reqGlEsVersion" to it.reqGlEsVersion,
+                "glEsVersion" to if (it.name == null) it.glEsVersion else null,
+                "reqGlEsVersion" to if (it.name == null) it.reqGlEsVersion else null,
             )
 
             if (Build.VERSION.SDK_INT >= 24) {

@@ -23,7 +23,7 @@ class SystemFeature {
   /// The GLES version used by an application.
   /// The upper order 16 bits represent the major version and the lower
   /// order 16 bits the minor version. Only valid if name is null.
-  final int reqGlEsVersion;
+  final int? reqGlEsVersion;
 
   // region API >= 24
 
@@ -39,13 +39,15 @@ class SystemFeature {
 
   // endregion
 
+  /// [SystemFeature] must have either [name] or
+  /// [glEsVersion] & [reqGlEsVersion], but never both.
   const SystemFeature({
     this.name,
     required this.version,
     required this.flags,
     this.glEsVersion,
-    required this.reqGlEsVersion,
-  });
+    this.reqGlEsVersion,
+  }) : assert((name == null) ^ (glEsVersion == null && reqGlEsVersion == null));
 
   @override
   bool operator ==(Object other) =>
@@ -109,7 +111,7 @@ class SystemFeature {
       version: map['version'] as int?,
       flags: map['flags'] as int,
       glEsVersion: map['glEsVersion'] as String?,
-      reqGlEsVersion: map['reqGlEsVersion'] as int,
+      reqGlEsVersion: map['reqGlEsVersion'] as int?,
     );
   }
 }
