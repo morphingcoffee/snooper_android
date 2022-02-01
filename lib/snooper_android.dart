@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:snooper_android/model/features/system_feature.dart';
 import 'package:snooper_android/model/sensors/sensor_info.dart';
 import 'package:snooper_android/model/simple_android_package_info.dart';
 import 'package:snooper_android/model/detailed_android_package_info.dart';
@@ -32,6 +33,11 @@ class SnooperAndroid {
   /// refresh period)
   static Future<List<SensorInfo>> get sensorInfos async {
     return _sensors();
+  }
+
+  /// Get a list of hardware and software features of an Android device
+  static Future<List<SystemFeature>> get systemFeatures async {
+    return _systemFeatures();
   }
 
   static Future<List<SimpleAndroidPackageInfo>> _simplePackages() async {
@@ -67,4 +73,15 @@ class SnooperAndroid {
         .map((sensorInfoMap) => SensorInfo.fromMap(sensorInfoMap))
         .toList(growable: false);
   }
+
+  static Future<List<SystemFeature>> _systemFeatures() async {
+    final task = _channel.invokeListMethod<Map<dynamic, dynamic>>('getSystemFeatures');
+    final taskResult = (await task) ?? [];
+    final featureMaps = taskResult.map((e) => Map<String, dynamic>.from(e));
+
+    return featureMaps
+        .map((featureMap) => SystemFeature.fromMap(featureMap))
+        .toList(growable: false);
+  }
+
 }

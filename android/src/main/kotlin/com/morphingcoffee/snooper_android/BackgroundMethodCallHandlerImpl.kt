@@ -42,6 +42,9 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
                 "getSensors" -> {
                     getSensors(result)
                 }
+                "getSystemFeatures" -> {
+                    getSystemFeatures(result)
+                }
                 else -> {
                     result.notImplemented()
                 }
@@ -290,6 +293,31 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
         }
 
         result.success(sensorMaps)
+    }
+
+    // endregion
+
+    // region feature retrieval impl
+
+    private fun getSystemFeatures(@NonNull result: MethodChannel.Result) {
+        val pm: PackageManager = context.packageManager
+        val features = pm.systemAvailableFeatures
+        val featureMaps: List<MutableMap<String, Any?>> = features.map {
+            val featureMap: MutableMap<String, Any?> = mutableMapOf(
+                "name" to it.name,
+                "flags" to it.flags,
+                "glEsVersion" to if (it.name == null) it.glEsVersion else null,
+                "reqGlEsVersion" to if (it.name == null) it.reqGlEsVersion else null,
+            )
+
+            if (Build.VERSION.SDK_INT >= 24) {
+                featureMap["version"] = it.version
+            }
+
+            featureMap
+        }
+
+        result.success(featureMaps)
     }
 
     // endregion
