@@ -14,6 +14,7 @@ By using `SnooperAndroid` you can retrieve the following information:
     - APK Signatures
     - Other Metadata
 - Sensors List
+- (Software & Hardware) Features List
   
 ### Specs & Constraints  
 Flutter Android plugin embedding version: **V2**  
@@ -38,6 +39,10 @@ List<DetailedAndroidPackageInfo> detailedPackages = await SnooperAndroid.detaile
 List<SensorInfo> sensors = await SnooperAndroid.sensorInfos;
 ```
 
+[System Feature](./lib/model/features/system_feature.dart):
+```dart
+List<SystemFeature> features = await SnooperAndroid.systemFeatures;
+```
 
 ### Example App
 Available at [./example/lib/](./example/lib/)  
@@ -52,6 +57,7 @@ Available at [./example/lib/](./example/lib/)
   <img src="docs/media/sample-package-services.png" width="250">
   <img src="docs/media/sample-package-signatures.png" width="250">
   <img src="docs/media/sample-sensors.png" width="250">
+  <img src="docs/media/sample-system-features.png" width="250">
 </p>
 
 
