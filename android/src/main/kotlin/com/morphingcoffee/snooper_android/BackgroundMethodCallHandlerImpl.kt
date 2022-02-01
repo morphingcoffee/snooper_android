@@ -78,6 +78,11 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
 
     //region detailed package retrieval impl
 
+    /**
+     * The package metadata (e.g. icon) fetching is not parallelized in this impl because running
+     * those tasks asynchronously resulted in *intermittent* binder errors, such as:
+     * `E/JavaBinder: !!! FAILED BINDER TRANSACTION !!!  (parcel size = 168)`
+     */
     private fun getPackagesDetailed(@NonNull result: MethodChannel.Result) {
         val packageInfoMaps = mutableListOf<Map<String, Any?>>()
         val pm: PackageManager = context.packageManager
