@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snooper_android/constants/android_flags.dart';
+import 'package:snooper_android/model/features/system_feature.dart';
 import 'package:snooper_android/model/sensors/sensor_info.dart';
 
 import 'package:snooper_android/model/simple_android_package_info.dart';
@@ -7,6 +8,7 @@ import 'package:snooper_android/model/detailed_android_package_info.dart';
 import 'package:snooper_android/snooper_android.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_detailed.dart';
 import 'package:snooper_android_example/screens/apps/display_packages_simple.dart';
+import 'package:snooper_android_example/screens/features/display_system_features.dart';
 import 'package:snooper_android_example/screens/sensors/display_sensors.dart';
 
 class ExampleScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class _ExampleScreenState extends State<ExampleScreen> {
   List<SimpleAndroidPackageInfo>? _simplePackages;
   List<DetailedAndroidPackageInfo>? _detailedPackages;
   List<SensorInfo>? _sensors;
+  List<SystemFeature>? _systemFeatures;
 
   @override
   void initState() {
@@ -58,6 +61,12 @@ class _ExampleScreenState extends State<ExampleScreen> {
       _sensors = sensors;
       _safeSetState();
     });
+
+    // Fetch system features info
+    SnooperAndroid.systemFeatures.then((features) {
+      _systemFeatures = features;
+      _safeSetState();
+    });
   }
 
   @override
@@ -91,7 +100,7 @@ class _ExampleScreenState extends State<ExampleScreen> {
         _navInfoItem(
           icon: Icons.backpack_outlined,
           title: "All Applications",
-          subtitle: "limited info",
+          subtitle: "limited package info",
           hasLoaded: () => _simplePackages != null,
           navDestination: () => DisplayPackagesSimpleScreen(
             pkgs: _simplePackages!,
@@ -100,7 +109,7 @@ class _ExampleScreenState extends State<ExampleScreen> {
         _navInfoItem(
             icon: Icons.backpack,
             title: "User Applications",
-            subtitle: "detailed info",
+            subtitle: "detailed package info",
             hasLoaded: () => _detailedPackages != null,
             navDestination: () {
               // Filter out system apps
@@ -115,7 +124,7 @@ class _ExampleScreenState extends State<ExampleScreen> {
         _navInfoItem(
             icon: Icons.backpack,
             title: "System Applications",
-            subtitle: "detailed info",
+            subtitle: "detailed package info",
             hasLoaded: () => _detailedPackages != null,
             navDestination: () {
               // Filter out non-system apps
@@ -130,11 +139,21 @@ class _ExampleScreenState extends State<ExampleScreen> {
         _navInfoItem(
             icon: Icons.sensors,
             title: "Sensors",
-            subtitle: "sensors",
+            subtitle: "pre-installed & dynamic device sensors",
             hasLoaded: () => _sensors != null,
             navDestination: () {
               return DisplaySensorsScreen(
                 sensors: _sensors!,
+              );
+            }),
+        _navInfoItem(
+            icon: Icons.star,
+            title: "System Features",
+            subtitle: "hardware & software features of the device",
+            hasLoaded: () => _systemFeatures != null,
+            navDestination: () {
+              return DisplaySystemFeaturesScreen(
+                features: _systemFeatures!,
               );
             }),
       ],
