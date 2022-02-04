@@ -13,6 +13,10 @@ dependencies:
   snooper_android:
     path: ../
 
+  # Dependencies for easy visualization of the retrieved data
+  # not required for `snooper_android` to function
+  charts_flutter: ^0.12.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

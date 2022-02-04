@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snooper_android/constants/android_flags.dart';
+import 'package:snooper_android/model/audio/microphone_info.dart';
 import 'package:snooper_android/model/features/system_feature.dart';
 import 'package:snooper_android/model/sensors/sensor_info.dart';
 
@@ -10,6 +11,8 @@ import 'package:snooper_android_example/screens/apps/display_packages_detailed.d
 import 'package:snooper_android_example/screens/apps/display_packages_simple.dart';
 import 'package:snooper_android_example/screens/features/display_system_features.dart';
 import 'package:snooper_android_example/screens/sensors/display_sensors.dart';
+
+import 'microphones/display_microphones.dart';
 
 class ExampleScreen extends StatefulWidget {
   final String appTitle;
@@ -25,6 +28,7 @@ class _ExampleScreenState extends State<ExampleScreen> {
   List<DetailedAndroidPackageInfo>? _detailedPackages;
   List<SensorInfo>? _sensors;
   List<SystemFeature>? _systemFeatures;
+  List<MicrophoneInfo>? _microphones;
 
   @override
   void initState() {
@@ -65,6 +69,12 @@ class _ExampleScreenState extends State<ExampleScreen> {
     // Fetch system features info
     SnooperAndroid.systemFeatures.then((features) {
       _systemFeatures = features;
+      _safeSetState();
+    });
+
+    // Fetch microphones info
+    SnooperAndroid.microphones.then((microphones) {
+      _microphones = microphones;
       _safeSetState();
     });
   }
@@ -154,6 +164,16 @@ class _ExampleScreenState extends State<ExampleScreen> {
             navDestination: () {
               return DisplaySystemFeaturesScreen(
                 features: _systemFeatures!,
+              );
+            }),
+        _navInfoItem(
+            icon: Icons.mic,
+            title: "Microphones",
+            subtitle: "microphones & their metadata",
+            hasLoaded: () => _microphones != null,
+            navDestination: () {
+              return DisplayMicrophonesScreen(
+                microphones: _microphones!,
               );
             }),
       ],

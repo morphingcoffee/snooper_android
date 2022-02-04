@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:snooper_android/model/audio/microphone_info.dart';
 import 'package:snooper_android/model/features/system_feature.dart';
 import 'package:snooper_android/model/sensors/sensor_info.dart';
 import 'package:snooper_android/model/simple_android_package_info.dart';
@@ -40,6 +41,12 @@ class SnooperAndroid {
     return _systemFeatures();
   }
 
+  /// Get a list of currently available built-in & connected
+  /// (e.g. USB, Bluetooth) microphone metadata
+  static Future<List<MicrophoneInfo>> get microphones async {
+    return _microphones();
+  }
+
   static Future<List<SimpleAndroidPackageInfo>> _simplePackages() async {
     final task =
         _channel.invokeListMethod<Map<dynamic, dynamic>>('getPackagesSimple');
@@ -75,7 +82,8 @@ class SnooperAndroid {
   }
 
   static Future<List<SystemFeature>> _systemFeatures() async {
-    final task = _channel.invokeListMethod<Map<dynamic, dynamic>>('getSystemFeatures');
+    final task =
+        _channel.invokeListMethod<Map<dynamic, dynamic>>('getSystemFeatures');
     final taskResult = (await task) ?? [];
     final featureMaps = taskResult.map((e) => Map<String, dynamic>.from(e));
 
@@ -84,4 +92,14 @@ class SnooperAndroid {
         .toList(growable: false);
   }
 
+  static Future<List<MicrophoneInfo>> _microphones() async {
+    final task =
+        _channel.invokeListMethod<Map<dynamic, dynamic>>('getMicrophones');
+    final taskResult = (await task) ?? [];
+    final microphoneMaps = taskResult.map((e) => Map<String, dynamic>.from(e));
+
+    return microphoneMaps
+        .map((micMap) => MicrophoneInfo.fromMap(micMap))
+        .toList(growable: false);
+  }
 }

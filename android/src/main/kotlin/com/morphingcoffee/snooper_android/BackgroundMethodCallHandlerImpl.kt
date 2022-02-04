@@ -9,6 +9,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.media.AudioManager
+import android.media.MicrophoneInfo.SENSITIVITY_UNKNOWN
+import android.media.MicrophoneInfo.SPL_UNKNOWN
 import android.os.Build
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.MethodCall
@@ -44,6 +47,9 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
                 }
                 "getSystemFeatures" -> {
                     getSystemFeatures(result)
+                }
+                "getMicrophones" -> {
+                    getMicrophones(result)
                 }
                 else -> {
                     result.notImplemented()
@@ -318,6 +324,44 @@ class BackgroundMethodCallHandlerImpl(private val context: Context) :
         }
 
         result.success(featureMaps)
+    }
+
+    // endregion
+
+    // region mic info retrieval impl
+
+    /** Implemented for APIs >= 28, returns empty mic info list otherwise **/
+    private fun getMicrophones(@NonNull result: MethodChannel.Result) {
+        val audioMan = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val micsInfo = mutableListOf<Map<String, Any?>>()
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            audioMan.microphones.forEach { mic ->
+                micsInfo.add(
+                    mapOf(
+                        "id" to mic.id,
+                        "address" to mic.address,
+                        "description" to mic.description,
+                        "group" to mic.group,
+                        "directionality" to mic.directionality,
+                        "location" to mic.location,
+                        "sensitivity" to if (mic.sensitivity == SENSITIVITY_UNKNOWN) null else mic.sensitivity,
+                        "maxSpl" to if (mic.maxSpl == SPL_UNKNOWN) null else mic.maxSpl,
+                        "minSpl" to if (mic.minSpl == SPL_UNKNOWN) null else mic.minSpl,
+                        "frequencyResponse" to mic.frequencyResponse.map {
+                            listOf(
+                                it.first,
+                                it.second
+                            )
+                        },
+                        "position" to mic.position?.let { listOf(it.x, it.y, it.z) },
+                        "orientation" to mic.orientation?.let { listOf(it.x, it.y, it.z) },
+                    )
+                )
+            }
+        }
+
+        result.success(micsInfo)
     }
 
     // endregion

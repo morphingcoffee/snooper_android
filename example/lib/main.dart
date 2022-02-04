@@ -22,6 +22,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: _primarySwatch,
         splashColor: _primarySwatch[300],
         highlightColor: _primarySwatch[200],
+        backgroundColor: _primarySwatch[200],
       ),
       home: const ExampleScreen("Snooper Sample App"),
     );
